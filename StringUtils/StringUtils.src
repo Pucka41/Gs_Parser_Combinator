@@ -1,0 +1,20 @@
+fullStringSplit = function(str_)
+    result = []
+    for char in str_
+        result.push(char)
+    end for
+    return result
+end function
+
+stringStartsWith = function(srcString,toCheck)
+    result = null
+    for i in range(0,toCheck.len-1)
+        if srcString[i] != toCheck[i] then
+            result = false
+            break
+        else if srcString[i] == toCheck[i] then
+            result = true
+        end if
+    end for
+    return result
+end function

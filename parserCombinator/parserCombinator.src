@@ -1,41 +1,84 @@
+import_code("../StringUtils/StringUtils.src":"../StringUtils/StringUtils.src")
+
 ParserState={}
 ParserState.index = 0
 ParserState.targetString = ""
 ParserState.result = null
+ParserState.isError = false
+ParserState.error = null
 
-fullStringSplit = function(String)
-    result = []
-    for char in String
-        result.push(char)
-    end for
-    return result
+updateParserState = function(state,index,result)
+    newState = new ParserState
+    newState.index = index
+    newState.result = result
+    newState.isError = state.isError
+    newState.error = state.error
+    newState.targetString = state.targetString
+    return newState
 end function
 
+updateParserError = function(state,errorMessage)
+    newState = new ParserState
+    newState.index = state.index
+    newState.result = state.result
+    newState.isError = true
+    newState.error = errorMessage
+    newState.targetString = state.targetString
+    return newState
+end function
 
 stringParser = function(input_str)
-    startState = new ParserState
-    startState.index = 0
-    startState.targetString = targetString
-    
-end function
+    parser = function(parserState)
 
-stringStartsWith = function(srcString,toCheck)
-    toCeckLen = toCheck.len
-    srcStringLen = srcString.len
-    if(srcStringLen <= toCheckLen) then
-
+    if parserState.isError then
+        return parserState
     end if
-    for char in srcString
-       
-    end for
+    slicedTarget = slice(parserState.targetString,parserState.index)
+    if slicedTarget.len == 0 then
+        return updateParserError(parserState,"str: Tried to match : "+input_str+" , but got unexpected end of input.")
+    end if
+    if stringStartsWith(slicedTarget,input_str) then
+        parserStateTwo = updateParserState(parserState,parserState.index+input_str.len,input_str)
+        return parserStateTwo
+    end if
+        parserStateTwo = updateParserError(parserState, "tried to match "+input_str+", but got : "+slice(parserState.targetString,parserState.index,parserState.index+10)+"")
+        return parserStateTwo
+    end function
+    return @parser
 end function
 
+sequenceOfParser = function(parsers)
+    parser = function (parserState)
+        if parserState.isError then
+            return parserState
+        end if 
+        results = []
+        nextState = parserState
+
+        for p in parsers
+            nextState = p(nextState)
+            if nextState.isError then
+                break
+            end if
+            results.push(nextState.result)
+        end for
+
+        lastParserState = updateParserState(nextState,nextState.index,results)
+        return lastParserState
+    end function
+    return @parser
+end function
 run = function(parser,targetString)
     initialState = new ParserState
     initialState.index = 0
     initialState.targetString = targetString
     initialState.result = null
+    initialState.isError = false
+    initialState.error = null
     return parser(initialState)
 end function
 
-stringParser("abcdefg")
+helloWorldParser = stringParser("hello world")
+goodbyeWorldParser = stringParser("goodbye world")
+parser = sequenceOfParser([@helloWorldParser,@goodbyeWorldParser])
+print(run(@parser, "hello worldgoodbye world"))
