@@ -9,21 +9,21 @@ ParserState.error = null
 
 updateParserState = function(state,index,result)
     newState = new ParserState
+	newState.targetString = state.targetString
+	newState.result = result
     newState.index = index
-    newState.result = result
     newState.isError = state.isError
     newState.error = state.error
-    newState.targetString = state.targetString
     return newState
 end function
 
 updateParserError = function(state,errorMessage)
     newState = new ParserState
+	newState.targetString = state.targetString
+	newState.result = state.result
     newState.index = state.index
-    newState.result = state.result
     newState.isError = true
     newState.error = errorMessage
-    newState.targetString = state.targetString
     return newState
 end function
 
