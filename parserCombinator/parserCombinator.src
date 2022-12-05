@@ -1,0 +1,41 @@
+ParserState={}
+ParserState.index = 0
+ParserState.targetString = ""
+ParserState.result = null
+
+fullStringSplit = function(String)
+    result = []
+    for char in String
+        result.push(char)
+    end for
+    return result
+end function
+
+
+stringParser = function(input_str)
+    startState = new ParserState
+    startState.index = 0
+    startState.targetString = targetString
+    
+end function
+
+stringStartsWith = function(srcString,toCheck)
+    toCeckLen = toCheck.len
+    srcStringLen = srcString.len
+    if(srcStringLen <= toCheckLen) then
+
+    end if
+    for char in srcString
+       
+    end for
+end function
+
+run = function(parser,targetString)
+    initialState = new ParserState
+    initialState.index = 0
+    initialState.targetString = targetString
+    initialState.result = null
+    return parser(initialState)
+end function
+
+stringParser("abcdefg")
