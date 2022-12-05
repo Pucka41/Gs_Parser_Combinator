@@ -1,9 +1,9 @@
 import_code("../StringUtils/StringUtils.src":"../StringUtils/StringUtils.src")
 
 ParserState={}
-ParserState.index = 0
 ParserState.targetString = ""
 ParserState.result = null
+ParserState.index = 0
 ParserState.isError = false
 ParserState.error = null
 
