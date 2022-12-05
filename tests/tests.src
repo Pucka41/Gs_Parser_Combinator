@@ -1,0 +1,8 @@
+import_code("../parserCombinator/parserCombinator.src":"../parserCombinator/parserCombinator.src")
+
+helloWorldParser = stringParser("hello")
+
+goodbyeWorldParser = stringParser("goodbye")
+parser = sequenceOfParser([helloWorldParser,goodbyeWorldParser])
+
+print(parser.run( "hellogoodbye"))

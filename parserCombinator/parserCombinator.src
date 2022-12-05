@@ -44,7 +44,8 @@ stringParser = function(input_str)
         parserStateTwo = updateParserError(parserState, "tried to match "+input_str+", but got : "+slice(parserState.targetString,parserState.index,parserState.index+10)+"")
         return parserStateTwo
     end function
-    return @parser
+    parserObj = Parser.construct(@parser)
+    return parserObj
 end function
 
 sequenceOfParser = function(parsers)
@@ -56,7 +57,7 @@ sequenceOfParser = function(parsers)
         nextState = parserState
 
         for p in parsers
-            nextState = p(nextState)
+            nextState = p.parserStateTransformerFunction(nextState)
             if nextState.isError then
                 break
             end if
@@ -66,19 +67,22 @@ sequenceOfParser = function(parsers)
         lastParserState = updateParserState(nextState,nextState.index,results)
         return lastParserState
     end function
-    return @parser
-end function
-run = function(parser,targetString)
-    initialState = new ParserState
-    initialState.index = 0
-    initialState.targetString = targetString
-    initialState.result = null
-    initialState.isError = false
-    initialState.error = null
-    return parser(initialState)
+    parserObj = Parser.construct(@parser)
+    return parserObj
 end function
 
-helloWorldParser = stringParser("hello world")
-goodbyeWorldParser = stringParser("goodbye world")
-parser = sequenceOfParser([@helloWorldParser,@goodbyeWorldParser])
-print(run(@parser, "hello worldgoodbye world"))
+Parser = {}
+Parser.construct = function(parserStateTransformerFunction)
+    self = new Parser
+    self.parserStateTransformerFunction = @parserStateTransformerFunction
+    return self
+end function
+Parser.run = function(targetString)
+    initialState = new ParserState
+    initialState.targetString = targetString
+    initialState.result = null
+    initialState.index = 0
+    initialState.isError = false
+    initialState.error = null
+    return self.parserStateTransformerFunction(initialState)
+end function
